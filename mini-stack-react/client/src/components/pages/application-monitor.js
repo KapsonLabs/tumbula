@@ -1,7 +1,7 @@
 import React from "react";
 
 import FooterComponent from "../footer";
-import TableComponent from "../baby-components/table";
+// import TableComponent from "../baby-components/table";
 import HeadBannerComponent from "../baby-components/headbanner";
 
 class ApplicationMonitor extends React.Component{

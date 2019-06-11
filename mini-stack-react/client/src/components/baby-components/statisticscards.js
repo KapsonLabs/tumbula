@@ -47,14 +47,14 @@ const StatsCards = () =>
                     <i className="mdi mdi-currency-usd mr-3 icon-lg text-danger"></i>
                     <div className="d-flex flex-column justify-content-around">
                         <small className="mb-1 text-muted">Revenue</small>
-                        <h5 className="mr-2 mb-0">$577545</h5>
+                        <h5 className="mr-2 mb-0">$577000</h5>
                     </div>
                     </div>
                     <div className="d-flex border-md-right flex-grow-1 align-items-center justify-content-center p-3 item">
                     <i className="mdi mdi-eye mr-3 icon-lg text-success"></i>
                     <div className="d-flex flex-column justify-content-around">
                         <small className="mb-1 text-muted">Total Stores</small>
-                        <h5 className="mr-2 mb-0">9833550</h5>
+                        <h5 className="mr-2 mb-0">3</h5>
                     </div>
                     </div>
                     <div className="d-flex border-md-right flex-grow-1 align-items-center justify-content-center p-3 item">

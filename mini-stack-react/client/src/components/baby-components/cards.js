@@ -14,7 +14,7 @@ const Cards = () =>
             <div className="card">
                 <div className="card-body">
                     <p className="card-title">Cash deposits</p>
-                    <p className="mb-4">To start a blog, think of a topic about and first brainstorm party is ways to write details</p>
+                    <p className="mb-4">Summary of all cash deposits to your stores.</p>
                     <div id="cash-deposits-chart-legend" className="d-flex justify-content-center pt-3"></div>
                 <canvas id="cash-deposits-chart"></canvas>
                 </div>
@@ -26,7 +26,7 @@ const Cards = () =>
                     <p className="card-title">Total sales</p>
                     <h1>$ 28835</h1>
                     <h4>Gross sales over the years</h4>
-                    <p className="text-muted">Today, many people rely on computers to do homework, work, and create or store useful information. Therefore, it is important </p>
+                    <p className="text-muted">Total sales from the stores</p>
                     <div id="total-sales-chart-legend"></div>                  
                 </div>
                 <canvas id="total-sales-chart"></canvas>

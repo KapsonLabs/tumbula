@@ -1,7 +1,7 @@
 import React from "react";
 
 import FooterComponent from "../footer";
-import DashboardButtonComponent from "../baby-components/dash-buttons";
+// import DashboardButtonComponent from "../baby-components/dash-buttons";
 import HeadBannerComponent from "../baby-components/headbanner";
 
 class StoreFundTransferComponent extends React.Component{
