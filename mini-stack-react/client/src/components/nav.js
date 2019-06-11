@@ -134,7 +134,7 @@ class NavComponent extends React.Component {
         </li>
         <li className="nav-item nav-profile dropdown">
         <a className="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-            <img src="images/faces/face5.jpg" alt="profile"/>
+            <img src={profileface} alt="profile"/>
             <span className="nav-profile-name">Allan Katongole</span>
         </a>
         <div className="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">

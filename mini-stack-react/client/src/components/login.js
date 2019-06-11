@@ -22,7 +22,7 @@ const Login = () =>
                 <div className="brand-logo">
                     <img src={logo} alt="logo"/>
                 </div>
-                <h4>Welcome back!</h4>
+                <h4>Welcome back to Mini-Cart</h4>
                 <h6 className="font-weight-light">Happy to see you again!</h6>
                 <form className="pt-3">
                     <div className="form-group">
@@ -60,15 +60,15 @@ const Login = () =>
                     <Link className="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" to="/admin">LOGIN</Link>
                     </div>
                     <div className="mb-2 d-flex">
-                    <button type="button" className="btn btn-facebook auth-form-btn flex-grow mr-1">
+                    {/* <button type="button" className="btn btn-facebook auth-form-btn flex-grow mr-1">
                         <i className="mdi mdi-facebook mr-2"></i>Facebook
                     </button>
                     <button type="button" className="btn btn-google auth-form-btn flex-grow ml-1">
                         <i className="mdi mdi-google mr-2"></i>Google
-                    </button>
+                    </button> */}
                     </div>
                     <div className="text-center mt-4 font-weight-light">
-                    Don't have an account? <a href="register-2.html" className="text-primary">Create</a>
+                    Store Owner and Don't have an account? <a href="register-2.html" className="text-primary">Request</a> one now
                     </div>
                 </form>
                 </div>

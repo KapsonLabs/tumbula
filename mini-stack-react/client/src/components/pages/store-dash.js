@@ -1,20 +1,20 @@
 import React from "react";
 
-import FooterComponent from "./footer";
-import TableComponent from "./baby-components/table";
-import DashboardButtonComponent from "./baby-components/dash-buttons";
-import HeadBannerComponent from "./baby-components/headbanner";
-import StatisticsCardComponent from "./baby-components/statisticscards";
-import CardsComponent from "./baby-components/cards";
+import FooterComponent from "../footer";
+import TableComponent from "../baby-components/table";
+import DashboardButtonComponent from "../baby-components/dash-buttons"
+import HeadBannerComponent from "../baby-components/headbanner";
+import StatisticsCardComponent from "../baby-components/statisticscards";
+import CardsComponent from "../baby-components/cards";
 
-class DashboardComponent extends React.Component{
+class StoreOwnerDashboardComponent extends React.Component{
     render(){
         return(
             <div className="main-panel">
                 <div className="content-wrapper">
                     <HeadBannerComponent
-                        bannerHead={"Admin Dashboard"}
-                        bannerWords={"Administrator Analytics Dashboard"}
+                        bannerHead={"Store Owner Dashboard"}
+                        bannerWords={"Store Owner Analytics Dashboard"}
                         headButton={"Download Report"}
                         >
                         <DashboardButtonComponent
@@ -40,4 +40,4 @@ class DashboardComponent extends React.Component{
     }
 }
 
-export default DashboardComponent;
+export default StoreOwnerDashboardComponent;

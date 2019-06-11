@@ -1,21 +1,21 @@
 import React from "react";
 
 import NavComponent from "./nav";
-import SideComponent from "./sidebar";
-import StoresBody from "./pages/stores-body";
+import StoreOwnerSideBar from "./pages/store-owner-sidebar";
+import StoreOwnerDashboardComponent from "./pages/store-dash";
 
-class StoresPage extends React.Component{
+class StoreOwnerDashboard extends React.Component{
     render(){
         return <>
             <div className="container-scroller">
                 <NavComponent/>
                 <div className="container-fluid page-body-wrapper">
-                    <SideComponent/>
-                    <StoresBody/>
+                    <StoreOwnerSideBar/>
+                    <StoreOwnerDashboardComponent/>
                 </div>
             </div>
         </>;
     }
 }
 
-export default StoresPage;
+export default StoreOwnerDashboard;

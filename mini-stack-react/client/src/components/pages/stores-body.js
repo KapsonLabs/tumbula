@@ -7,12 +7,13 @@ import HeadBannerComponent from "../baby-components/headbanner";
 class StoresBody extends React.Component{
     render(){
         return(
-            <div class="main-panel">
-                <div class="content-wrapper">
+            <div className="main-panel">
+                <div className="content-wrapper">
                     <HeadBannerComponent
-                        bannerHead={"Store Manager"}
+                        bannerHead={"Admin Store Manager"}
                         bannerWords={"Manage all stores on the Application here"}
                         headButton={"Add New Store"}
+                        linkTo={"/addstore"}
                         >
                     </HeadBannerComponent>
                     <TableComponent

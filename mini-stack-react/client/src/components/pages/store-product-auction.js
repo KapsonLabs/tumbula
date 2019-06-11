@@ -1,21 +1,19 @@
 import React from "react";
 
-import FooterComponent from "./footer";
-import TableComponent from "./baby-components/table";
-import DashboardButtonComponent from "./baby-components/dash-buttons";
-import HeadBannerComponent from "./baby-components/headbanner";
-import StatisticsCardComponent from "./baby-components/statisticscards";
-import CardsComponent from "./baby-components/cards";
+import FooterComponent from "../footer";
+import DashboardButtonComponent from "../baby-components/dash-buttons";
+import HeadBannerComponent from "../baby-components/headbanner";
 
-class DashboardComponent extends React.Component{
+class StoreProductAuctionComponent extends React.Component{
     render(){
         return(
             <div className="main-panel">
                 <div className="content-wrapper">
                     <HeadBannerComponent
-                        bannerHead={"Admin Dashboard"}
-                        bannerWords={"Administrator Analytics Dashboard"}
-                        headButton={"Download Report"}
+                        bannerHead={"Product Auction"}
+                        bannerWords={"Manage all your product auctions on the Application here"}
+                        headButton={"Add Product Auction"}
+                        linkTo={"/addstore"}
                         >
                         <DashboardButtonComponent
                             iconClassName={"mdi mdi-download text-muted"}
@@ -27,12 +25,7 @@ class DashboardComponent extends React.Component{
                             iconClassName={"mdi mdi-plus text-muted"}
                         ></DashboardButtonComponent>
                     </HeadBannerComponent>
-                    <StatisticsCardComponent/>
-                    <CardsComponent/>
-                    <TableComponent
-                        tableTitle={"Recent Transactions"}
-                    >
-                    </TableComponent>
+
                 </div>
                 <FooterComponent/>
             </div>
@@ -40,4 +33,4 @@ class DashboardComponent extends React.Component{
     }
 }
 
-export default DashboardComponent;
+export default StoreProductAuctionComponent;

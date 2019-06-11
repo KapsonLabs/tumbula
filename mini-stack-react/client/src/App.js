@@ -8,6 +8,12 @@ import AdminDashboard from './components/admin-dashboard';
 import StoresPage from './components/stores';
 import ApplicationManager from './components/applicationmanager';
 import LoginComponent from './components/login';
+import StoresCreationPage from './components/storecreation';
+import StoreOwnerDashbarad from './components/store-dashboard';
+import StoreFront from './components/storefront';
+import StoreProductAuction from './components/product-auction';
+import StoreProfileSettings from './components/profile-settings'
+import StoreFundsTransfer from './components/funds-transfer';
 
 class App extends Component {
   state = { storageValue: 0, web3: null, accounts: null, contract: null };
@@ -63,6 +69,12 @@ class App extends Component {
         <Route path="/admin" component={AdminDashboard} />
         <Route path="/stores" component={StoresPage} />
         <Route path="/appmanager" component={ApplicationManager} />
+        <Route path="/addstore" component={StoresCreationPage} />
+        <Route path="/store_owner" component={StoreOwnerDashbarad}/>
+        <Route path="/store_front" component={StoreFront}/>
+        <Route path="/store_auction" component={StoreProductAuction}/>
+        <Route path="/funds_transfer" component={StoreFundsTransfer}/>
+        <Route path="/profile_settings" component={StoreProfileSettings}/>
       </Router>
     );
   }

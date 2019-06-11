@@ -2,20 +2,20 @@ import React from "react";
 
 import NavComponent from "./nav";
 import SideComponent from "./sidebar";
-import StoresBody from "./pages/stores-body";
+import StoresCreatorBody from "./pages/stores-create";
 
-class StoresPage extends React.Component{
+class StoresCreationPage extends React.Component{
     render(){
         return <>
             <div className="container-scroller">
                 <NavComponent/>
                 <div className="container-fluid page-body-wrapper">
                     <SideComponent/>
-                    <StoresBody/>
+                    <StoresCreatorBody/>
                 </div>
             </div>
         </>;
     }
 }
 
-export default StoresPage;
+export default StoresCreationPage;
