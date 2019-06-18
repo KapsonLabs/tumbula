@@ -14,6 +14,7 @@ import StoreFront from './components/storefront';
 import StoreProductAuction from './components/product-auction';
 import StoreProfileSettings from './components/profile-settings'
 import StoreFundsTransfer from './components/funds-transfer';
+import PrivateRoute from './components/private-route';
 
 class App extends Component {
   // state = { storageValue: 0, web3: null, accounts: null, contract: null };
@@ -65,8 +66,8 @@ class App extends Component {
     // }
     return (
       <Router>
-        <Route exact path="/" component={LoginComponent} />
-        <Route path="/admin" component={AdminDashboard} />
+        <Route exact path="/login" component={LoginComponent} />
+        <PrivateRoute path="/admin" component={AdminDashboard} />
         <Route path="/stores" component={StoresPage} />
         <Route path="/appmanager" component={ApplicationManager} />
         <Route path="/addstore" component={StoresCreationPage} />

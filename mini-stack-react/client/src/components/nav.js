@@ -142,7 +142,7 @@ class NavComponent extends React.Component {
             <i className="mdi mdi-settings text-primary"></i>
             Settings
             </a>
-            <Link className="dropdown-item" to="/">
+            <Link className="dropdown-item" to="/login">
                 <i className="mdi mdi-logout text-primary"></i>
                 Logout
             </Link>

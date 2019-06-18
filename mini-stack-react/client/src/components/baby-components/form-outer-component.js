@@ -6,12 +6,12 @@ const FormOuterComponent = (props) => {
             <div className="card">
                 <div className="card-body">
                     <h4 className="card-title">{props.formTitle}</h4>
-                    <form className="form-sample">
+                    {/* <form className="form-sample" onSubmit={props.onSubmit}> */}
                     {/* <p className="card-description">
                         Personal info
                     </p> */}
                         {props.children}
-                    </form>
+                    {/* </form> */}
                 </div>
             </div>
         </div>

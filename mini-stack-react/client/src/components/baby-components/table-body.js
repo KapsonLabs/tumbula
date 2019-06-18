@@ -3,7 +3,7 @@ import React from "react";
 const TableBodyComponent = (props) => {
     return(
         <tbody>
-            <tr>
+            <tr key={props.key}>
                 {props.children}
             </tr>
         </tbody>

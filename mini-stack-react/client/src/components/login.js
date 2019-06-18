@@ -1,84 +1,185 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { Formik, Field, Form, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+
+import authenticationService from '../services/authentication_service';
 
 //image imports
 import logo from './static/images/logo.svg';
 
 class LoginComponent extends React.Component{
+
+    constructor(props) {
+        super(props);
+
+        // redirect to home if already logged in
+        if (authenticationService.currentUserValue) { 
+            this.props.history.push('/admin');
+        }
+    }
     render(){
         return(
-            <Login/>
+            <div className="container-scroller">
+                <div className="container-fluid page-body-wrapper full-page-wrapper">
+                    <div className="content-wrapper d-flex align-items-stretch auth auth-img-bg">
+                        <div className="row flex-grow">
+                            <div className="col-lg-6 d-flex align-items-center justify-content-center">
+                                <div className="auth-form-transparent text-left p-3">
+                                    <div className="brand-logo">
+                                        <img src={logo} alt="logo"/>
+                                    </div>
+                                    <h4>Welcome back to Tumbula Stores</h4>
+                                    <h6 className="font-weight-light">Happy to see you again!</h6>
+
+                            <Formik
+                                initialValues={{
+                                    username: '',
+                                    password: ''
+                                }}
+
+                                onSubmit={({ username, password }, { setStatus, setSubmitting }) => {
+                                    setStatus();
+                                    authenticationService.login(username, password)
+                                        .then(
+                                            user => {
+                                                const { from } = this.props.location.state || { from: { pathname: "/admin" } };
+                                                this.props.history.push(from);
+                                            },
+                                            error => {
+                                                setSubmitting(false);
+                                                setStatus(error);
+                                            }
+                                        );
+                                }}
+
+                                render={({ errors, status, touched, isSubmitting }) => (
+                                    <Form className="pt-3">
+                                        <div className="form-group">
+                                            <label htmlFor="exampleInputEmail">Username</label>
+                                            <div className="input-group">
+                                                <div className="input-group-prepend bg-transparent">
+                                                    <span className="input-group-text bg-transparent border-right-0">
+                                                        <i className="mdi mdi-account-outline text-primary"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="text" className="form-control form-control-lg border-left-0" id="exampleInputEmail" placeholder="Username"/>
+                                            </div>
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label htmlFor="exampleInputPassword">Password</label>
+                                            <div className="input-group">
+                                                <div className="input-group-prepend bg-transparent">
+                                                    <span className="input-group-text bg-transparent border-right-0">
+                                                        <i className="mdi mdi-lock-outline text-primary"></i>
+                                                    </span>
+                                                </div>
+                                                <input type="password" className="form-control form-control-lg border-left-0" id="exampleInputPassword" placeholder="Password"/>                        
+                                            </div>
+                                        </div>
+
+                                        <div className="my-2 d-flex justify-content-between align-items-center">
+                                            <div className="form-check">
+                                                <label className="form-check-label text-muted">
+                                                    <input type="checkbox" className="form-check-input"/>
+                                                    Keep me signed in
+                                                </label>
+                                            </div>
+                                            <a href="#" className="auth-link text-black">Forgot password?</a>
+                                        </div>
+
+                                        <div className="my-3">
+                                            <Link className="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" to="/admin">LOGIN</Link>
+                                        </div>
+
+                                        <div className="text-center mt-4 font-weight-light">
+                                            Store Owner and Don't have an account? <a href="register-2.html" className="text-primary">Request</a> one now
+                                        </div>
+                                    </Form>
+                                )}
+                            />
+                            </div>
+                            </div>
+
+                            <div className="col-lg-6 login-half-bg d-flex flex-row">
+                                <p className="text-white font-weight-medium text-center flex-grow align-self-end">Copyright &copy; 2019 Kapson Labs Uganda.  All rights reserved.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         );
     }
 }
 
-const Login = () =>
-    <div className="container-scroller">
-        <div className="container-fluid page-body-wrapper full-page-wrapper">
-        <div className="content-wrapper d-flex align-items-stretch auth auth-img-bg">
-            <div className="row flex-grow">
-            <div className="col-lg-6 d-flex align-items-center justify-content-center">
-                <div className="auth-form-transparent text-left p-3">
-                <div className="brand-logo">
-                    <img src={logo} alt="logo"/>
-                </div>
-                <h4>Welcome back to Mini-Cart</h4>
-                <h6 className="font-weight-light">Happy to see you again!</h6>
-                <form className="pt-3">
-                    <div className="form-group">
-                    <label for="exampleInputEmail">Username</label>
-                    <div className="input-group">
-                        <div className="input-group-prepend bg-transparent">
-                        <span className="input-group-text bg-transparent border-right-0">
-                            <i className="mdi mdi-account-outline text-primary"></i>
-                        </span>
-                        </div>
-                        <input type="text" className="form-control form-control-lg border-left-0" id="exampleInputEmail" placeholder="Username"/>
-                    </div>
-                    </div>
-                    <div className="form-group">
-                    <label for="exampleInputPassword">Password</label>
-                    <div className="input-group">
-                        <div className="input-group-prepend bg-transparent">
-                        <span className="input-group-text bg-transparent border-right-0">
-                            <i className="mdi mdi-lock-outline text-primary"></i>
-                        </span>
-                        </div>
-                        <input type="password" className="form-control form-control-lg border-left-0" id="exampleInputPassword" placeholder="Password"/>                        
-                    </div>
-                    </div>
-                    <div className="my-2 d-flex justify-content-between align-items-center">
-                    <div className="form-check">
-                        <label className="form-check-label text-muted">
-                        <input type="checkbox" className="form-check-input"/>
-                        Keep me signed in
-                        </label>
-                    </div>
-                    <a href="#" className="auth-link text-black">Forgot password?</a>
-                    </div>
-                    <div className="my-3">
-                    <Link className="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" to="/admin">LOGIN</Link>
-                    </div>
-                    <div className="mb-2 d-flex">
-                    {/* <button type="button" className="btn btn-facebook auth-form-btn flex-grow mr-1">
-                        <i className="mdi mdi-facebook mr-2"></i>Facebook
-                    </button>
-                    <button type="button" className="btn btn-google auth-form-btn flex-grow ml-1">
-                        <i className="mdi mdi-google mr-2"></i>Google
-                    </button> */}
-                    </div>
-                    <div className="text-center mt-4 font-weight-light">
-                    Store Owner and Don't have an account? <a href="register-2.html" className="text-primary">Request</a> one now
-                    </div>
-                </form>
-                </div>
-            </div>
-            <div className="col-lg-6 login-half-bg d-flex flex-row">
-                <p className="text-white font-weight-medium text-center flex-grow align-self-end">Copyright &copy; 2019 Kapson Labs Uganda.  All rights reserved.</p>
-            </div>
-            </div>
-        </div>
-        </div>
-    </div>;
+// const Login = () =>
+//     <div className="container-scroller">
+//         <div className="container-fluid page-body-wrapper full-page-wrapper">
+//         <div className="content-wrapper d-flex align-items-stretch auth auth-img-bg">
+//             <div className="row flex-grow">
+//             <div className="col-lg-6 d-flex align-items-center justify-content-center">
+//                 <div className="auth-form-transparent text-left p-3">
+//                 <div className="brand-logo">
+//                     <img src={logo} alt="logo"/>
+//                 </div>
+//                 <h4>Welcome back to Tumbula Stores</h4>
+//                 <h6 className="font-weight-light">Happy to see you again!</h6>
+//                 <form className="pt-3">
+//                     <div className="form-group">
+//                     <label htmlFor="exampleInputEmail">Username</label>
+//                     <div className="input-group">
+//                         <div className="input-group-prepend bg-transparent">
+//                         <span className="input-group-text bg-transparent border-right-0">
+//                             <i className="mdi mdi-account-outline text-primary"></i>
+//                         </span>
+//                         </div>
+//                         <input type="text" className="form-control form-control-lg border-left-0" id="exampleInputEmail" placeholder="Username"/>
+//                     </div>
+//                     </div>
+//                     <div className="form-group">
+//                     <label htmlFor="exampleInputPassword">Password</label>
+//                     <div className="input-group">
+//                         <div className="input-group-prepend bg-transparent">
+//                         <span className="input-group-text bg-transparent border-right-0">
+//                             <i className="mdi mdi-lock-outline text-primary"></i>
+//                         </span>
+//                         </div>
+//                         <input type="password" className="form-control form-control-lg border-left-0" id="exampleInputPassword" placeholder="Password"/>                        
+//                     </div>
+//                     </div>
+//                     <div className="my-2 d-flex justify-content-between align-items-center">
+//                     <div className="form-check">
+//                         <label className="form-check-label text-muted">
+//                         <input type="checkbox" className="form-check-input"/>
+//                         Keep me signed in
+//                         </label>
+//                     </div>
+//                     <a href="#" className="auth-link text-black">Forgot password?</a>
+//                     </div>
+//                     <div className="my-3">
+//                     <Link className="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" to="/admin">LOGIN</Link>
+//                     </div>
+//                     <div className="mb-2 d-flex">
+//                     {/* <button type="button" className="btn btn-facebook auth-form-btn flex-grow mr-1">
+//                         <i className="mdi mdi-facebook mr-2"></i>Facebook
+//                     </button>
+//                     <button type="button" className="btn btn-google auth-form-btn flex-grow ml-1">
+//                         <i className="mdi mdi-google mr-2"></i>Google
+//                     </button> */}
+//                     </div>
+//                     <div className="text-center mt-4 font-weight-light">
+//                     Store Owner and Don't have an account? <a href="register-2.html" className="text-primary">Request</a> one now
+//                     </div>
+//                 </form>
+//                 </div>
+//             </div>
+//                 <div className="col-lg-6 login-half-bg d-flex flex-row">
+//                     <p className="text-white font-weight-medium text-center flex-grow align-self-end">Copyright &copy; 2019 Kapson Labs Uganda.  All rights reserved.</p>
+//                 </div>
+//             </div>
+//         </div>
+//         </div>
+//     </div>;
 
 export default LoginComponent;

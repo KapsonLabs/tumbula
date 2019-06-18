@@ -1,5 +1,4 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 // class HeadBannerComponent extends React.Component{
 //     render(){
@@ -27,7 +26,6 @@ const HeadBannerComponent = (props) => {
                 </div>
                 <div className="d-flex justify-content-between align-items-end flex-wrap">
                     {props.children}
-                    <Link role="button" to={props.linkTo} className="btn btn-primary mt-2 mt-xl-0">{props.headButton}</Link>
                 </div>
             </div>
         </div>
