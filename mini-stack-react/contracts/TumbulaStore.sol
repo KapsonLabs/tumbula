@@ -15,6 +15,8 @@ contract TumbulaStore{
     ------------------------------------
      */
     using Roles for Roles.Role;
+    using SafeMath for uint;
+    using SafeMath for uint8;
 
     Roles.Role private admin;
     Roles.Role private store_owner;
@@ -23,13 +25,16 @@ contract TumbulaStore{
     uint public storeOwnerNumber = 0;
     uint public storeFrontNumber = 0;
 
+    /*Products array*/
+    address[] public products;
+
     /*Boolean value to track emergency mode for circuit breaker pattern */
     bool private emergency;
 
     struct StoreOwner{
         uint    id;
-        string  first_name;
-        string  last_name;
+        string  firstname;
+        string  lastname;
         string  password;
         string  email;
         string  role;
@@ -38,10 +43,10 @@ contract TumbulaStore{
 
     struct StoreFront{
         uint    id;
-        address store_owner;
-        string  store_name;
-        string  store_location;
-        string  store_merchandise;
+        address storeowner;
+        string  storename;
+        string  storelocation;
+        string  storemerchandise;
     }
 
     mapping(uint => StoreOwner) public storeowners;
@@ -50,8 +55,8 @@ contract TumbulaStore{
 
     event storeOwnerCreated(
         uint id,
-        string first_name,
-        string last_name,
+        string firstname,
+        string lastname,
         string password,
         string email,
         string role,
@@ -60,14 +65,29 @@ contract TumbulaStore{
 
     event storeFrontCreated(
         uint   id,
-        address store_owner,
-        string store_name,
-        string store_location,
-        string store_merchandise
+        address storeowner,
+        string storename,
+        string storelocation,
+        string storemerchandise
+    );
+
+    event ProductCreated(
+        address product,
+        uint availableStock,
+        uint price,
+        string productName, 
+        string shortDescription
+    );
+
+    event ProductsBought(
+        address product, 
+        address buyer,
+        uint price,
+        uint quantity
     );
 
     /* Modifer that checks if the msg.sender has an admin role */
-    modifier onlyAdmin(){
+    modifier onlyAdmin {
         require(
             admin.has(msg.sender),
             "Only the admin can call this function"
@@ -76,7 +96,7 @@ contract TumbulaStore{
     }
 
     /* Modifer that checks if the msg.sender has a store owner role */
-    modifier onlyStoreOwner(){
+    modifier onlyStoreOwner {
         require(
             store_owner.has(msg.sender),
             "Only the store owner can call this function"
@@ -95,16 +115,46 @@ contract TumbulaStore{
         _;
     }
 
-    // constructor() public {
-    //     addStoreOwner("Katongole", "Allan");
-    //     addStoreOwner("Assimirwe", "Abraham");
-    // }
-
-    /*Admin Functions*/
-    function addStoreOwner(string memory _first_name, string memory _last_name, string memory _email) public {
-        storeowners[storeOwnerNumber] = StoreOwner(storeOwnerNumber, _first_name, _last_name, "default123", _email, "store_owner", true);
+    constructor() public {
+        admin.add(msg.sender);
+        emergency = false;
+    }
+    
+    /*
+    --------------------------------------------------------
+    Admin Functions
+    --------------------------------------------------------
+    */
+    /** @dev Creates a new storeOwner 
+     * @param _firstname Firstname of the store owner
+     * @param _lastname last name of the store owner
+     * @param _email Email address of the store owner 
+     * @return Boolean for testing in solidity
+     */
+    function addStoreOwner(
+        string memory _firstname, 
+        string memory _lastname, 
+        string memory _email
+    ) 
+            public 
+            onlyAdmin
+    {
+        storeowners[storeOwnerNumber] = StoreOwner(storeOwnerNumber, _firstname, _lastname, "default123", _email, "store_owner", true);
         storeOwnerNumber = storeOwnerNumber + 1;
-        emit storeOwnerCreated(storeOwnerNumber, _first_name, _last_name, "default123", _email, "store_owner", true);
+        emit storeOwnerCreated(
+            storeOwnerNumber, 
+            _firstname, 
+            _lastname, 
+            "default123", 
+            _email, 
+            "store_owner", 
+            true
+        );
+    }
+
+    /*Add admin */
+    function addAdmin(address _address) public onlyAdmin {
+        admin.add(_address);
     }
 
     /** @dev Lets admin toggle the state of emergency 
@@ -115,15 +165,63 @@ contract TumbulaStore{
         return true;
     }
 
-    /*Add admin */
-    function addAdmin(address _address) public{
-        admin.add(_address);
+    /*Store Owner Functions*/
+    /** @dev Adds a new store front 
+     * @param _storename Name of the storefront
+     * @param _storelocation Location of the storefront
+     * @param _storemerchandise Type of merchandise dealt in by storefront
+     * @return Boolean for testing in solidity
+     */
+    function addStoreFront(
+        string memory _storename, 
+        string memory _storelocation, 
+        string memory _storemerchandise
+        ) 
+            public 
+            onlyStoreOwner
+        {
+        storefronts[storeFrontNumber] = StoreFront(storeFrontNumber, msg.sender, _storename, _storelocation, _storemerchandise);
+        storeFrontNumber = storeFrontNumber + 1;
+        emit storeFrontCreated(
+            storeFrontNumber, 
+            msg.sender, 
+            _storename, 
+            _storelocation, 
+            _storemerchandise
+        );
     }
 
-    /*Store Owner Functions*/
-    function addStoreFront(string memory _store_name, string memory _store_location, string memory _store_merchandise) public {
-        storefronts[storeFrontNumber] = StoreFront(storeFrontNumber, msg.sender, _store_name, _store_location, _store_merchandise);
-        storeFrontNumber = storeFrontNumber + 1;
-        emit storeFrontCreated(storeFrontNumber, msg.sender, _store_name, _store_location, _store_merchandise);
+    /** @dev Creates ERC20 token per product 
+     * @param availableStock Quantity of products available for each individual product
+     * @param price Price of each product
+     * @param productName Name of the product 
+     * @param shortDescription Short description of the product
+     * @return Boolean for testing in solidity
+     */
+    function createProduct(
+        uint availableStock,
+        uint price,
+        string memory productName,
+        string memory shortDescription
+    ) 
+        public 
+        stopInEmergency
+        returns (bool)
+    {
+        require(price > 0, "Price should be greater than zero");
+        require(bytes(productName).length > 0, "There should be a name");
+        require(bytes(shortDescription).length > 0, "There should be a short description");
+
+        Product product = new Product(msg.sender, availableStock, price, productName, shortDescription);
+        products.push(address(product));
+        
+        emit ProductCreated(
+            address(product),
+            availableStock,
+            price,
+            productName,
+            shortDescription   
+        );
+        return true;
     }
 }

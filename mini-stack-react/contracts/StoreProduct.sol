@@ -48,8 +48,8 @@ contract StoreProduct is StandardToken{
         address _storeowner,
         uint _availableStock,
         uint _price,
-        string _productName, 
-        string _shortDescription
+        string memory _productName, 
+        string memory _shortDescription
     ) 
         public 
     {
@@ -77,8 +77,8 @@ contract StoreProduct is StandardToken{
     function updateProduct(
         uint _availableStock,
         uint _price,
-        string _productName,
-        string _shortDescription
+        string memory _productName,
+        string memory _shortDescription
     ) 
         public 
         onlyStoreOwner
@@ -103,7 +103,14 @@ contract StoreProduct is StandardToken{
      * @param quantity Number of products to purchase
      * @return Boolean for testing in solidity 
      */
-    function buyProducts(address buyer, uint quantity) external onlyStoreFront returns (bool) {
+    function buyProducts(
+        address buyer, 
+        uint quantity
+    ) 
+        external 
+        onlyStoreFront 
+        returns (bool) 
+    {
         require(balances[storeowner] >= quantity);
         balances[storeowner] = balances[storeowner].sub(quantity);
         balances[buyer] = balances[buyer].add(quantity);
@@ -127,8 +134,8 @@ contract StoreProduct is StandardToken{
         address _storeowner,
         uint _availableStock,
         uint _price,
-        string _productName,
-        string _shortDescription
+        string memory _productName,
+        string memory _shortDescription
     ) {
         _storeowner = storeowner;
         _availableStock = availableStock;
