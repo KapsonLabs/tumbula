@@ -67,7 +67,7 @@ class App extends Component {
     return (
       <Router>
         <Route exact path="/login" component={LoginComponent} />
-        <PrivateRoute path="/admin" component={AdminDashboard} />
+        <Route path="/admin" component={AdminDashboard} />
         <Route path="/stores" component={StoresPage} />
         <Route path="/appmanager" component={ApplicationManager} />
         <Route path="/addstore" component={StoresCreationPage} />

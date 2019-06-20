@@ -11,8 +11,8 @@ export default class authenticationService {
         this.domain = domain || "http://localhost:3000"; // API server domain
     }
 
-    login
-    logout
+    // login
+    // logout
     currentUser = currentUserSubject.asObservable()
     
     currentUserValue = () => { 
