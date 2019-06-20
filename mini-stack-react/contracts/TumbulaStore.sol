@@ -63,6 +63,11 @@ contract TumbulaStore{
         bool active
     );
 
+    event roleAdded(
+        address role_address,
+        address added_by
+    );
+
     event storeFrontCreated(
         uint   id,
         address storeowner,
@@ -152,9 +157,15 @@ contract TumbulaStore{
         );
     }
 
-    /*Add admin */
+    /** @dev Lets admin add more admins 
+     * @return Boolean for testing in solidity
+     */
     function addAdmin(address _address) public onlyAdmin {
         admin.add(_address);
+        emit roleAdded(
+            _address,
+            msg.sender
+        );
     }
 
     /** @dev Lets admin toggle the state of emergency 
