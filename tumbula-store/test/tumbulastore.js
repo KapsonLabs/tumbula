@@ -1,4 +1,5 @@
 const TumbulaStore = artifacts.require("./TumbulaStore.sol");
+const assertRevert = require('./utils/assertRevert').assertRevert;
 
 contract('TumbulaStore', function(accounts) {
 
@@ -36,6 +37,43 @@ contract('TumbulaStore', function(accounts) {
         assert.strictEqual(roleAdded.event, "roleAdded", "addAdmin() call did not log event roleAdded");
         assert.strictEqual(roleAdded.args.role_address,accounts[1], "roleAdded event logged did not have expected role_address");
         assert.strictEqual(roleAdded.args.added_by,accounts[0], "roleAdded event logged did not have expected added_by");
+    
+    });
+
+
+    it("Should allow an admin to pause the contract incase of emergency", async () => {
+
+        assert.ok(await storeInstance.toggleEmergency({from: accounts[0]}));
+    
+    });
+
+
+    it("Should allow a storeowner add a storefront", async () => {
+        
+        //Create the store owner first.
+        let tx = await storeInstance.addStoreOwner(accounts[1], "Allan",
+                                    "Katongole","kapsonkatongole@gmail.com",
+                                    {from: accounts[0]});
+
+        const storeOwnerCreated = tx.logs[0];
+
+        //Use store owner address to create the store
+        let tx1 = await storeInstance.addStoreFront("KikuuboLimited", "Kikuubo", "General Merchandise",
+                                    {from: storeOwnerCreated.args.storeowneraddress});
+    
+        assert.strictEqual(tx1.receipt.logs.length, 1, "addStoreFront() call did not log 1 event");
+        assert.strictEqual(tx1.logs.length, 1, "addStoreFront() call did not log 1 event");
+        const storeFrontCreated = tx1.logs[0];
+        assert.strictEqual(storeFrontCreated.event, "storeFrontCreated", "addStoreFront() call did not log event storeFrontCreated");
+        assert.strictEqual(storeFrontCreated.args.storename, "KikuuboLimited", "storeFrontCreated event logged did not have expected store_name");
+        assert.strictEqual(storeFrontCreated.args.storelocation, "Kikuubo", "storeFrontCreated event logged did not have expected store_location");
+    
+    });
+
+    it("Should not allow non-store-owners create storefronts", async () => {
+
+        assertRevert(storeInstance.addStoreFront("KampalaShop","Kampala","Shoes",
+                              {from: accounts[1]}), "Non store Owner should not be able to create a store front");
     
     });
      

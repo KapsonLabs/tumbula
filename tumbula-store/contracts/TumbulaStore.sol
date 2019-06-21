@@ -78,7 +78,7 @@ contract TumbulaStore{
         string storemerchandise
     );
 
-    event ProductCreated(
+    event productCreated(
         address product,
         uint availableStock,
         uint price,
@@ -252,7 +252,7 @@ contract TumbulaStore{
         Product product = new Product(msg.sender, availableStock, price, productName, shortDescription);
         products.push(address(product));
         
-        emit ProductCreated(
+        emit productCreated(
             address(product),
             availableStock,
             price,
