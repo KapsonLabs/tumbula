@@ -1,27 +1,33 @@
 import React from "react";
-import { Redirect } from 'react-router-dom'
+import { Redirect, withRouter } from 'react-router-dom'
 
 import FooterComponent from "../footer";
 import HeadBannerComponent from "../baby-components/headbanner";
 import FormOuterComponent from "../baby-components/form-outer-component";
 import FormMinorComponent from "../baby-components/form-minor-component";
 import ReusableButtonComponent from "../baby-components/reusablebuttoncomponent";
+import LoaderComponent from "../baby-components/loader-component";
 
 import getWeb3 from "../../utils/getWeb3";
 import TumbulaStoreContract from "../../contracts/TumbulaStore.json";
 
+const etherscanBaseUrl = "https://rinkeby.etherscan.io"
+
 class StoresCreatorBody extends React.Component{
 
     constructor(props) {
-        super(props)
+        super(props);
     
         this.state = {
           storeInstance: undefined,
           account: null,
           web3: null,
+          address: '',
           firstName: '',
           lastName: '',
-          redirect: false
+          email: '',
+          etherscanLink: "https://rinkeby.etherscan.io",
+          loading: false
         };
         
         this.handleChange = this.handleChange.bind(this)
@@ -60,21 +66,97 @@ class StoresCreatorBody extends React.Component{
         }
       };
 
-    //set redirect state to true
-    setRedirect = () => {
-        this.setState({
-          redirect: true
-        })
-    }
+    handleChange(event){
 
-    //handle the actual redirect
-    renderRedirect = () => {
-        if (this.state.redirect) {
-          return <Redirect to='/stores' />
+        switch(event.target.name) {
+            case "address":
+                this.setState({"address": event.target.value})
+            break;
+            case "firstName":
+                this.setState({"firstName": event.target.value})
+                break;
+            case "lastName":
+                this.setState({"lastName": event.target.value})
+                break;
+            case "email":
+                this.setState({"email": event.target.value})
+                break;
+            default:
+                break;
         }
     }
 
+    // Handle form submit
+
+    async handleStoreCreation(event)
+        {
+            this.setState({ loading: true });
+            if (typeof this.state.storeInstance !== 'undefined') {
+                event.preventDefault();
+                let result = await this.state.storeInstance.methods.addStoreOwner(this.state.address,this.state.firstName,this.state.lastName, this.state.email).send({ from: this.state.account})
+                this.setLastTransactionDetails(result)
+
+                //Rudimentary create data envelope from event
+                let dataEnvelope = {
+                    username: result.events.storeOwnerCreated.returnValues.firstname,
+                    first_name: result.events.storeOwnerCreated.returnValues.firstname,
+                    last_name: result.events.storeOwnerCreated.returnValues.lastname,
+                    email: result.events.storeOwnerCreated.returnValues.email,
+                    password: result.events.storeOwnerCreated.returnValues.password,
+                    public_address: result.events.storeOwnerCreated.returnValues.storeowneraddress,
+                    role: 'STORE_OWNER'
+                }
+
+                this.saveResultToApi(dataEnvelope)
+                this.loading = false;
+                console.log(result.events.storeOwnerCreated.returnValues.firstname)
+        }
+    }
+
+    setLastTransactionDetails(result)
+        {
+            if(result.tx !== 'undefined'){
+                this.setState({etherscanLink: etherscanBaseUrl+"/tx/"+result.tx})
+            }
+            else{
+                this.setState({etherscanLink: etherscanBaseUrl})
+            }
+    }
+
+    saveResultToApi(eventData){
+        let formData  = new FormData();
+
+        for(let name in eventData) {
+            formData.append(name, eventData[name]);
+          }
+
+        fetch('http://localhost:8000/api/v1/auth/register/', {
+            method: 'POST',
+            body: formData
+          })
+          .then(res => {
+            if (res.status === 201) {
+              this.props.history.push('/stores');
+            } else {
+              const error = new Error(res.error);
+              throw error;
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            alert('Failed to write event data to API');
+          });
+    }
+
+
     render(){
+        if (this.state.loading){
+            return(
+            <LoaderComponent
+                title={"Please wait as transaction is being mined from chain...."}
+                >
+            </LoaderComponent>)
+        } else{
         return(
             <div className="main-panel">
                 <div className="content-wrapper">
@@ -91,6 +173,14 @@ class StoresCreatorBody extends React.Component{
                         <form className="form-sample" onSubmit={this.handleStoreCreation}>
                             <div className="row">
                                 <FormMinorComponent
+                                    label={"Address"}
+                                    placeHolder={"Please Enter Address of store owner"}
+                                    name={"address"}
+                                    value={this.state.address}
+                                    onChange={this.handleChange}
+                                >
+                                </FormMinorComponent>
+                                <FormMinorComponent
                                     label={"First Name"}
                                     placeHolder={"Please Enter First Name"}
                                     name={"firstName"}
@@ -106,14 +196,21 @@ class StoresCreatorBody extends React.Component{
                                     onChange={this.handleChange}
                                 >
                                 </FormMinorComponent>
+                                <FormMinorComponent
+                                    label={"Email"}
+                                    placeHolder={"Please Enter Email Address"}
+                                    name={"email"}
+                                    value={this.state.email}
+                                    onChange={this.handleChange}
+                                >
+                                </FormMinorComponent>
                             </div>
                             <div className="row">
-                                {/* {this.renderRedirect()} */}
                                 <ReusableButtonComponent
                                     type={"submit"}
                                     className={"btn btn-outline-secondary btn-lg"}
                                     label={"Submit"}
-                                    // onClick={this.setRedirect}
+                                    
                                 >
                                 </ReusableButtonComponent>
                             </div>
@@ -123,32 +220,8 @@ class StoresCreatorBody extends React.Component{
                 <FooterComponent/>
             </div>
         );
-    }
-
-
-    handleChange(event){
-
-        switch(event.target.name) {
-            case "firstName":
-                this.setState({"firstName": event.target.value})
-                break;
-            case "lastName":
-                this.setState({"lastName": event.target.value})
-                break;
-            default:
-                break;
-        }
-    }
-
-    // Handle form submit
-
-    async handleStoreCreation(event)
-        {
-            if (typeof this.state.storeInstance !== 'undefined') {
-                event.preventDefault();
-                await this.state.storeInstance.methods.addStoreOwner(this.state.firstName,this.state.lastName).send({ from: this.state.account})
         }
     }
 }
 
-export default StoresCreatorBody;
+export default withRouter(StoresCreatorBody);

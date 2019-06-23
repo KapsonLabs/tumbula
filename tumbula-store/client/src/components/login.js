@@ -31,6 +31,7 @@ export default class LoginComponent extends React.Component{
             }
           })
           .then(res => {
+            console.log(res.data)
             if (res.status === 200) {
               this.props.history.push('/admin');
             } else {
@@ -91,16 +92,19 @@ export default class LoginComponent extends React.Component{
                             <a href="#" className="auth-link text-black">Forgot password?</a>
                             </div>
                             <div className="my-3">
-                            <button type="submit" className="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn"  value="Submit">LOGIN</button>
+                                <button type="submit" className="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn"  value="Submit">LOGIN</button>
                             </div>
-                            <div className="mb-2 d-flex">
-                            {/* <button type="button" className="btn btn-facebook auth-form-btn flex-grow mr-1">
+                            <div className="my-3">
+                                <button type="submit" className="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn"  value="Submit">LOGIN WITH METAMASK</button>
+                            </div>
+                            {/* <div className="mb-2 d-flex">
+                            <button type="button" className="btn btn-facebook auth-form-btn flex-grow mr-1">
                                 <i className="mdi mdi-facebook mr-2"></i>Facebook
                             </button>
                             <button type="button" className="btn btn-google auth-form-btn flex-grow ml-1">
                                 <i className="mdi mdi-google mr-2"></i>Google
-                            </button> */}
-                            </div>
+                            </button>
+                            </div> */}
                             <div className="text-center mt-4 font-weight-light">
                             Store Owner and Don't have an account? <a href="register-2.html" className="text-primary">Request</a> one now
                             </div>

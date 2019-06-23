@@ -72,12 +72,14 @@ class StoresBody extends React.Component{
 
     renderTableData() {
         return this.state.storeOwners.map((storeOwner, index) => {
-            const {id, first_name, last_name, email} = storeOwner
+            const {id, storeowneraddress, firstname, lastname, email} = storeOwner
             return (
                 <TableBodyComponent key={id}>
-                    <TableBodyMinor title={first_name}>
+                    <TableBodyMinor title={storeowneraddress}>
                     </TableBodyMinor>
-                    <TableBodyMinor title={last_name}>
+                    <TableBodyMinor title={firstname}>
+                    </TableBodyMinor>
+                    <TableBodyMinor title={lastname}>
                     </TableBodyMinor>
                     <TableBodyMinor title={email}>
                     </TableBodyMinor>
@@ -103,14 +105,16 @@ class StoresBody extends React.Component{
 
 
                     <HoverableTableComponent
-                       cardTitle={"Store Fronts"} 
+                       cardTitle={"Store Owners"} 
                     >
                         <TableHeadComponent>
+                            <TableHeadMinor title={"Address"}>
+                            </TableHeadMinor>
                             <TableHeadMinor title={"First Name"}>
                             </TableHeadMinor>
                             <TableHeadMinor title={"Last Name"}>
                             </TableHeadMinor>
-                            <TableHeadMinor title={"Address"}>
+                            <TableHeadMinor title={"Email"}>
                             </TableHeadMinor>
                         </TableHeadComponent>
                         {this.renderTableData()}

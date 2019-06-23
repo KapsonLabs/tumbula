@@ -135,6 +135,18 @@ contract TumbulaStore{
     Admin Functions
     --------------------------------------------------------
     */
+
+     /** @dev Lets admin add more admins 
+     * @return Boolean for testing in solidity
+     */
+    function addAdmin(address _address) public onlyAdmin {
+        admin.add(_address);
+        emit roleAdded(
+            _address,
+            msg.sender
+        );
+    }
+
     /** @dev Creates a new storeOwner 
      * @param _firstname Firstname of the store owner
      * @param _lastname last name of the store owner
@@ -177,17 +189,6 @@ contract TumbulaStore{
         );
     }
 
-    /** @dev Lets admin add more admins 
-     * @return Boolean for testing in solidity
-     */
-    function addAdmin(address _address) public onlyAdmin {
-        admin.add(_address);
-        emit roleAdded(
-            _address,
-            msg.sender
-        );
-    }
-
     /** @dev Lets admin toggle the state of emergency 
      * @return Boolean for testing in solidity
      */
@@ -195,7 +196,6 @@ contract TumbulaStore{
         emergency = !emergency;
         return true;
     }
-
 
     /*
     ---------------------------------------------------------------
@@ -216,6 +216,7 @@ contract TumbulaStore{
         ) 
             public 
             onlyStoreOwner
+            stopInEmergency
         {
         storefronts[storeFrontNumber] = StoreFront(storeFrontNumber, msg.sender, _storename, _storelocation, _storemerchandise);
         storeFrontNumber = storeFrontNumber + 1;
@@ -242,6 +243,7 @@ contract TumbulaStore{
         string memory shortDescription
     ) 
         public 
+        onlyStoreOwner
         stopInEmergency
         returns (bool)
     {
@@ -261,4 +263,12 @@ contract TumbulaStore{
         );
         return true;
     }
+
+    /** @dev Returns array of product token addresses
+     * @return Product token addresses
+     */
+    // function getProducts() public view returns (address[]) {
+    //     return products;
+    // }
+
 }

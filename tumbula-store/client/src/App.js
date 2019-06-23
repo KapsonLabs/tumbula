@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch} from "react-router-dom";
 
 // import SimpleStorageContract from "./contracts/SimpleStorage.json";
 // import getWeb3 from "./utils/getWeb3";
@@ -66,16 +66,18 @@ class App extends Component {
     // }
     return (
       <Router>
-        <Route exact path="/login" component={LoginComponent} />
-        <Route path="/admin" component={AdminDashboard} />
-        <Route path="/stores" component={StoresPage} />
-        <Route path="/appmanager" component={ApplicationManager} />
-        <Route path="/addstore" component={StoresCreationPage} />
-        <Route path="/store_owner" component={StoreOwnerDashbarad}/>
-        <Route path="/store_front" component={StoreFront}/>
-        <Route path="/store_auction" component={StoreProductAuction}/>
-        <Route path="/funds_transfer" component={StoreFundsTransfer}/>
-        <Route path="/profile_settings" component={StoreProfileSettings}/>
+        <Switch>
+          <Route exact path="/login" component={LoginComponent} />
+          <Route path="/admin" component={AdminDashboard} />
+          <Route path="/stores" component={StoresPage} />
+          <Route path="/appmanager" component={ApplicationManager} />
+          <Route path="/addstore" component={StoresCreationPage} />
+          <Route path="/store_owner" component={StoreOwnerDashbarad}/>
+          <Route path="/store_front" component={StoreFront}/>
+          <Route path="/store_auction" component={StoreProductAuction}/>
+          <Route path="/funds_transfer" component={StoreFundsTransfer}/>
+          <Route path="/profile_settings" component={StoreProfileSettings}/>
+      </Switch>
       </Router>
     );
   }
