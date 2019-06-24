@@ -14,6 +14,9 @@ import StoreFront from './components/storefront';
 import StoreProductAuction from './components/product-auction';
 import StoreProfileSettings from './components/profile-settings'
 import StoreFundsTransfer from './components/funds-transfer';
+import AdminManagerPage from './components/adminmanager';
+import AdminCreationPage from './components/admincreate';
+import StoreFrontsCreationPage from './components/storefrontcreate';
 import PrivateRoute from './components/private-route';
 
 class App extends Component {
@@ -69,11 +72,14 @@ class App extends Component {
         <Switch>
           <Route exact path="/login" component={LoginComponent} />
           <Route path="/admin" component={AdminDashboard} />
+          <Route path="/adminmanager" component={AdminManagerPage} />
+          <Route path="/admincreate" component={AdminCreationPage} />
           <Route path="/stores" component={StoresPage} />
           <Route path="/appmanager" component={ApplicationManager} />
           <Route path="/addstore" component={StoresCreationPage} />
           <Route path="/store_owner" component={StoreOwnerDashbarad}/>
           <Route path="/store_front" component={StoreFront}/>
+          <Route path="/storefontcreate" component={StoreFrontsCreationPage}/>
           <Route path="/store_auction" component={StoreProductAuction}/>
           <Route path="/funds_transfer" component={StoreFundsTransfer}/>
           <Route path="/profile_settings" component={StoreProfileSettings}/>

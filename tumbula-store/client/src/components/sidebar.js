@@ -19,6 +19,12 @@ const Sidebar = () =>
             </Link>
         </li>
         <li className="nav-item">
+            <Link className="nav-link" to="/adminmanager">
+                <i className="mdi mdi-account-star menu-icon"></i>
+                <span className="menu-title">Admin Manager</span>
+            </Link>
+        </li>
+        <li className="nav-item">
             <Link className="nav-link" to="/stores">
                 <i className="mdi mdi-circle-outline menu-icon"></i>
                 <span className="menu-title">Store Manager</span>

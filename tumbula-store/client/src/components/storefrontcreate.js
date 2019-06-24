@@ -2,20 +2,20 @@ import React from "react";
 
 import NavComponent from "./nav";
 import SideComponent from "./sidebar";
-import AdminManager from "./pages/admin-manager";
+import StoreFrontCreatorBody from "./pages/store-front-create";
 
-class AdminManagerPage extends React.Component{
+class StoreFrontsCreationPage extends React.Component{
     render(){
         return <>
             <div className="container-scroller">
                 <NavComponent/>
                 <div className="container-fluid page-body-wrapper">
                     <SideComponent/>
-                    <AdminManager/>
+                    <StoreFrontCreatorBody/>
                 </div>
             </div>
         </>;
     }
 }
 
-export default AdminManagerPage;
+export default StoreFrontsCreationPage;
