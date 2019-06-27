@@ -30,15 +30,25 @@ export default class LoginComponent extends React.Component{
               'Content-Type': 'application/json'
             }
           })
-          .then(res => {
-            console.log(res.data)
-            if (res.status === 200) {
-              this.props.history.push('/admin');
-            } else {
-              const error = new Error(res.error);
-              throw error;
-            }
-          })
+          .then(res => res.json())
+            // console.log(res.json())
+            // if (res.status === 200) {
+            //   this.props.history.push('/admin');
+            // } else {
+            //   const error = new Error(res.error);
+            //   throw error;
+            // }
+          .then(data => {
+                if (data.data.role === "admin"){
+                        localStorage.setItem('currentUser', JSON.stringify(data));
+                        this.props.history.push('/admin');
+                    }
+                else if (data.data.role === "store_owner"){
+                        localStorage.setItem('currentUser', JSON.stringify(data));
+                        this.props.history.push('/store_owner');
+                    }
+                }    
+            )
           .catch(err => {
             console.error(err);
             alert('Error logging in please try again');
@@ -54,7 +64,7 @@ export default class LoginComponent extends React.Component{
                     <div className="col-lg-6 d-flex align-items-center justify-content-center">
                         <div className="auth-form-transparent text-left p-3">
                         <div className="brand-logo">
-                            <img src={logo} alt="logo"/>
+                            <h3>TUMBULA</h3>
                         </div>
                         <h4>Welcome back to Tumbula Stores</h4>
                         <h6 className="font-weight-light">Happy to see you again!</h6>

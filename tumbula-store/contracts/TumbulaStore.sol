@@ -28,6 +28,8 @@ contract TumbulaStore{
     /*Products array*/
     address[] public products;
 
+    /*  */
+
     /*Boolean value to track emergency mode for circuit breaker pattern */
     bool private emergency;
 
@@ -53,6 +55,9 @@ contract TumbulaStore{
     mapping(uint => StoreOwner) public storeowners;
 
     mapping(uint => StoreFront) public storefronts;
+
+    /*Mapping of storefronts to storeowner address */
+    mapping(address => uint[]) public storefrontIds;
 
     event storeOwnerCreated(
         uint id,
@@ -86,7 +91,7 @@ contract TumbulaStore{
         string shortDescription
     );
 
-    event ProductsBought(
+    event productsBought(
         address product, 
         address buyer,
         uint price,
@@ -220,6 +225,7 @@ contract TumbulaStore{
         {
         storefronts[storeFrontNumber] = StoreFront(storeFrontNumber, msg.sender, _storename, _storelocation, _storemerchandise);
         storeFrontNumber = storeFrontNumber + 1;
+        storefrontIds[msg.sender].push(storeFrontNumber);
         emit storeFrontCreated(
             storeFrontNumber, 
             msg.sender, 
@@ -229,6 +235,19 @@ contract TumbulaStore{
         );
     }
 
+    /** @dev Gets storefonts owned by particular storeowner 
+     * @param _userAddress Address of the owner
+     * @return Array of store fronts owned
+     */
+
+    function getStoreFronts(address _userAddress) public view onlyStoreOwner returns (uint[] memory storefrontsarray){
+        return storefrontIds[_userAddress];
+    }
+
+    function getStoreFrontNumber() public view returns (uint) {
+        return storeFrontNumber;
+    }
+
     /** @dev Creates ERC20 token per product 
      * @param availableStock Quantity of products available for each individual product
      * @param price Price of each product
@@ -236,12 +255,7 @@ contract TumbulaStore{
      * @param shortDescription Short description of the product
      * @return Boolean for testing in solidity
      */
-    function createProduct(
-        uint availableStock,
-        uint price,
-        string memory productName,
-        string memory shortDescription
-    ) 
+    function createProduct(uint availableStock, uint price, string memory productName, string memory shortDescription) 
         public 
         onlyStoreOwner
         stopInEmergency
@@ -262,6 +276,54 @@ contract TumbulaStore{
             shortDescription   
         );
         return true;
+    }
+
+    /** @dev Purchases movie tickets
+     * @param _product Address of product token
+     * @param _quantity quantity to be purchased
+     */
+    function buyProducts(address _product, uint _quantity)
+        public 
+        payable
+        stopInEmergency
+    {
+        require(_quantity > 0, "Ensure quantity is greater than zero");
+        Product product = Product(_product);
+        uint price = product.price();
+        
+        // check available quantity
+        require(_quantity <= product.availableStock(), "Ensure quantity is less than available Stock");
+        
+        // check payment amount
+        require(msg.value >= _quantity.mul(price), "Ensure price paid is enough to cover costs");
+        
+        // // check excess payment
+        // uint excess = msg.value.sub(quantity.mul(price));
+        // if (excess > 0) emit ExcessPaid(now, movie, msg.sender, excess);
+        
+        product.buyProducts(msg.sender, _quantity);
+        emit productsBought(address(product), msg.sender, price, _quantity);
+    }
+
+
+    /** @dev Checks for the role of a specific address
+     * @param _theAddress Address for which role is to be checked
+     * @return uint indicating specific role
+     */
+
+    function checkAdressRole(address _theAddress) public view returns (uint){
+
+        if (admin.has(_theAddress)) {
+            return 0;
+        }
+
+        if (store_owner.has(_theAddress)) {
+            return 1;
+        }
+
+        if (!store_owner.has(_theAddress) && !admin.has(_theAddress)) {
+            return 2;
+        }
     }
 
     /** @dev Returns array of product token addresses

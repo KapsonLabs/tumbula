@@ -1,9 +1,15 @@
 pragma solidity >=0.4.21 <0.6.0;
 import "./SafeMath.sol";
+import "./Roles.sol";
 import "./StandardToken.sol";
 
 /** @title A Store Product that inherits ERC20 */
 contract StoreProduct is StandardToken{
+
+    using Roles for Roles.Role;
+
+    Roles.Role private admin;
+    Roles.Role private store_owner;
     
     address public storeowner;
     address public storefront;
@@ -22,13 +28,13 @@ contract StoreProduct is StandardToken{
         string shortDescription
     );
 
-    modifier onlyStoreFront {
-        require(msg.sender == storefront, "Only store front can call this method");
-        _;
-    }
     
+    /* Modifer that checks if the msg.sender has a store owner role */
     modifier onlyStoreOwner {
-        require(msg.sender == storeowner, "Only store owner can call this method");
+        require(
+            store_owner.has(msg.sender),
+            "Only the store owner can call this function"
+            );
         _;
     }
     
@@ -38,14 +44,14 @@ contract StoreProduct is StandardToken{
     }
 
     /** @dev Instantiates a ERC20 token per product 
-     * @param _storeowner Address of filmmaker 
+     * @param _storefront Address of the storeowner 
      * @param _availableStock Quantity of stock of the product available
      * @param _price Price of a single product
      * @param _productName Name of the product
      * @param _shortDescription Short description of the product
      */
     constructor(
-        address _storeowner,
+        address _storefront,
         uint _availableStock,
         uint _price,
         string memory _productName, 
@@ -53,8 +59,8 @@ contract StoreProduct is StandardToken{
     ) 
         public 
     {
-        storefront = msg.sender;
-        storeowner = _storeowner;
+        storeowner = msg.sender;
+        storefront = _storefront;
         
         sales = 0;
         price = _price;
@@ -81,7 +87,6 @@ contract StoreProduct is StandardToken{
         string memory _shortDescription
     ) 
         public 
-        onlyStoreOwner
         returns (bool)
     {
         if (_availableStock <= totalSupply_) availableStock = _availableStock;
@@ -107,11 +112,10 @@ contract StoreProduct is StandardToken{
         address buyer, 
         uint quantity
     ) 
-        external 
-        onlyStoreFront 
+        external  
         returns (bool) 
     {
-        require(balances[storeowner] >= quantity);
+        require(balances[storeowner] >= quantity, "Quantity should be less that or equal to totalSupply");
         balances[storeowner] = balances[storeowner].sub(quantity);
         balances[buyer] = balances[buyer].add(quantity);
         

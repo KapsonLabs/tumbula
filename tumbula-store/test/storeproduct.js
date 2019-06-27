@@ -1,28 +1,28 @@
-const TumbulaStore = artifacts.require("./TumbulaStore.sol");
-const assertRevert = require('./utils/assertRevert').assertRevert;
+// const StoreProduct = artifacts.require("./StoreProduct.sol");
+// const assertRevert = require('./utils/assertRevert').assertRevert;
 
-contract('StoreProduct', function(accounts) {
+// contract('StoreProduct', function(accounts) {
 
-    let storeInstance;
+//     let storeProductInstance;
   
-    beforeEach(async () => {
-        storeInstance = await TumbulaStore.new()
-    })
+//     beforeEach(async () => {
+//         storeProductInstance = await StoreProduct.new()
+//     })
 
-    it("Should allow a product to be added to a storefront", async () => {
+//     it("Should allow a product to be updated by a storeowner", async () => {
         
-        //Create the store owner first.
-        let tx = await storeInstance.createProduct(10, 10000,
-                                    "Matooke","Matooke fresh from Uganda",
-                                    {from: accounts[3]});
+//         //Create the store owner first.
+//         let tx = await storeProductInstance.updateProduct(10, 10000, "Radio",
+//                                     "Good good radio my friend",
+//                                     {from: accounts[0]});
     
-        assert.strictEqual(tx.receipt.logs.length, 1, "createProduct() call did not log 1 event");
-        assert.strictEqual(tx.logs.length, 1, "createProduct() call did not log 1 event");
-        const productCreated = tx.logs[0];
-        assert.strictEqual(productCreated.event, "productCreated", "createProduct() call did not log event storeFrontCreated");
-        assert.strictEqual(productCreated.args.availableStock.toNumber(), 10, "productCreated event logged did not have expected availableStock");
-        assert.strictEqual(productCreated.args.price.toNumber(), 10000, "productCreated event logged did not have expected product price");
-        assert.strictEqual(productCreated.args.productName, "Matooke", "productCreated event logged did not have expected product name");
-    }); 
+//         assert.strictEqual(tx.receipt.logs.length, 1, "updateProduct() call did not log 1 event");
+//         assert.strictEqual(tx.logs.length, 1, "updateProduct() call did not log 1 event");
+//         const ProductUpdated = tx.logs[0];
+//         assert.strictEqual(ProductUpdated.event, "ProductUpdated", "updateProduct() call did not log event storeFrontCreated");
+//         assert.strictEqual(ProductUpdated.args.availableStock.toNumber(), 10, "productCreated event logged did not have expected availableStock");
+//         assert.strictEqual(ProductUpdated.args.price.toNumber(), 10000, "productCreated event logged did not have expected product price");
+//         assert.strictEqual(ProductUpdated.args.productName, "Radio", "productCreated event logged did not have expected product name");
+//     }); 
 
-});
+// });

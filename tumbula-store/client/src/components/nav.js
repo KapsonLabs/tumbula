@@ -2,8 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 //image imports
-import logo from './static/images/logo.svg';
-import logomini from './static/images/logo-mini.svg';
+// import logo from './static/images/logo.svg';
+// import logomini from './static/images/logo-mini.svg';
 import profileface from './static/images/faces/face4.jpg';
 
 class NavComponent extends React.Component {
@@ -18,8 +18,8 @@ class NavComponent extends React.Component {
     <nav className="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
         <div className="navbar-brand-wrapper d-flex justify-content-center">
             <div className="navbar-brand-inner-wrapper d-flex justify-content-between align-items-center w-100">  
-                <a className="navbar-brand brand-logo" href="index.html"><img src={logo} alt="logo"/></a>
-                <a className="navbar-brand brand-logo-mini" href="index.html"><img src={logomini} alt="logo"/></a>
+                <a className="navbar-brand brand-logo" href="index.html"><h3>TUMBULA</h3></a>
+                <a className="navbar-brand brand-logo-mini" href="index.html"><h3>TUMBULA</h3></a>
                 <button className="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
                     <span className="mdi mdi-sort-variant"></span>
                 </button>

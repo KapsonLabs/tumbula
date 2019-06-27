@@ -9,6 +9,14 @@ contract('TumbulaStore', function(accounts) {
         storeInstance = await TumbulaStore.new()
     })
 
+    it('deploys successfully', async () => {
+        const address = await storeInstance.address;
+        assert.notEqual(address, 0x0);
+        assert.notEqual(address, '');
+        assert.notEqual(address, null);
+        assert.notEqual(address, undefined)
+    })
+
     it("Should allow an admin to create a new store owner", async () => {
 
         let tx = await storeInstance.addStoreOwner(accounts[1], "Allan",
@@ -75,6 +83,85 @@ contract('TumbulaStore', function(accounts) {
         assertRevert(storeInstance.addStoreFront("KampalaShop","Kampala","Shoes",
                               {from: accounts[1]}), "Non store Owner should not be able to create a store front");
     
+    });
+
+    // it("Should allow a storeowner fetch only their storefronts", async () => {
+        
+    //     //Create the store owner first.
+    //     let tx = await storeInstance.addStoreOwner(accounts[1], "Allan",
+    //                                 "Katongole","kapsonkatongole@gmail.com",
+    //                                 {from: accounts[0]});
+
+    //     const storeOwnerCreated = tx.logs[0];
+
+    //     //Use store owner address to create the store
+    //     let tx1 = await storeInstance.addStoreFront("KikuuboLimited", "Kikuubo", "General Merchandise",
+    //                                 {from: storeOwnerCreated.args.storeowneraddress});
+
+    //     const storeFrontCreated = tx1.logs[0];
+    
+    //     const storeFrontsLength = await storeInstance.getStoreFrontNumber();
+    //     console.log(storeFrontsLength);
+
+    //     const storeFrontsFetched = await storeInstance.getStoreFronts(accounts[1],
+    //         {from: storeOwnerCreated.args.storeowneraddress});
+    //     console.log(storeFrontsFetched);
+
+    //     assert.strictEqual(storeFrontCreated.args.id, storeFrontsFetched);
+        
+    // });
+
+    it("Should allow a product to be added to a storefront", async () => {
+        
+        //Create the store owner first.
+        let tx = await storeInstance.addStoreOwner(accounts[2], "Allan",
+                                    "Katongole","kapsonkatongole@gmail.com",
+                                    {from: accounts[0]});
+
+        const storeOwnerCreated = tx.logs[0];
+
+        //create the product with storeowner address
+        let tx1 = await storeInstance.createProduct(10, 10000,
+                                    "Matooke","Matooke fresh from Uganda",
+                                    {from: storeOwnerCreated.args.storeowneraddress});
+    
+        assert.strictEqual(tx1.receipt.logs.length, 1, "createProduct() call did not log 1 event");
+        assert.strictEqual(tx1.logs.length, 1, "createProduct() call did not log 1 event");
+        const productCreated = tx1.logs[0];
+        assert.strictEqual(productCreated.event, "productCreated", "createProduct() call did not log event productCreated");
+        assert.strictEqual(productCreated.args.availableStock.toNumber(), 10, "productCreated event logged did not have expected availableStock");
+        assert.strictEqual(productCreated.args.price.toNumber(), 10000, "productCreated event logged did not have expected product price");
+        assert.strictEqual(productCreated.args.productName, "Matooke", "productCreated event logged did not have expected product name");
+    }); 
+
+    it("Should allow a product to be bought by a buyer", async () => {
+        
+        //Create the store owner first.
+        let tx = await storeInstance.addStoreOwner(accounts[2], "Allan",
+                                    "Katongole","kapsonkatongole@gmail.com",
+                                    {from: accounts[0]});
+
+        const storeOwnerCreated = tx.logs[0];
+
+        //create the product with storeowner address
+        let tx1 = await storeInstance.createProduct(10, 10000,
+                                    "Matooke","Matooke fresh from Uganda",
+                                    {from: storeOwnerCreated.args.storeowneraddress});
+
+        const productCreated = tx1.logs[0];
+
+        //Buy the product from the storefront
+        let tx2 = await storeInstance.buyProducts(productCreated.product, 6,
+            "Matooke","Matooke fresh from Uganda",
+            {from: accounts[3]});
+    
+        assert.strictEqual(tx1.receipt.logs.length, 1, "buyProducts() call did not log 1 event");
+        assert.strictEqual(tx1.logs.length, 1, "buyProducts() call did not log 1 event");
+        const productsBought = tx1.logs[0];
+        assert.strictEqual(productsBought.event, "productsBought", "buyProducts() call did not log event productsBought");
+        // assert.strictEqual(productsBought.args.availableStock.toNumber(), 10, "productCreated event logged did not have expected availableStock");
+        // assert.strictEqual(productCreated.args.price.toNumber(), 10000, "productCreated event logged did not have expected product price");
+        // assert.strictEqual(productCreated.args.productName, "Matooke", "productCreated event logged did not have expected product name");
     });
      
 });
