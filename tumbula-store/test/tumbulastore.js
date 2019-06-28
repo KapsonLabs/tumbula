@@ -49,13 +49,6 @@ contract('TumbulaStore', function(accounts) {
     });
 
 
-    it("Should allow an admin to pause the contract incase of emergency", async () => {
-
-        assert.ok(await storeInstance.toggleEmergency({from: accounts[0]}));
-    
-    });
-
-
     it("Should allow a storeowner add a storefront", async () => {
         
         //Create the store owner first.
@@ -144,21 +137,57 @@ contract('TumbulaStore', function(accounts) {
         const storeOwnerCreated = tx.logs[0];
 
         //create the product with storeowner address
-        let tx1 = await storeInstance.createProduct(10, 10000,
+        await storeInstance.createProduct(2, 10,
                                     "Matooke","Matooke fresh from Uganda",
                                     {from: storeOwnerCreated.args.storeowneraddress});
 
-        const productCreated = tx1.logs[0];
+        const product = await storeInstance.products(0);
 
         //Buy the product from the storefront
-        let tx2 = await storeInstance.buyProducts(productCreated.product, 6,
-            "Matooke","Matooke fresh from Uganda",
-            {from: accounts[3]});
+        let tx1 = await storeInstance.buyProducts(product, 2,
+            {from: accounts[3], value: 50});
     
         assert.strictEqual(tx1.receipt.logs.length, 1, "buyProducts() call did not log 1 event");
         assert.strictEqual(tx1.logs.length, 1, "buyProducts() call did not log 1 event");
         const productsBought = tx1.logs[0];
         assert.strictEqual(productsBought.event, "productsBought", "buyProducts() call did not log event productsBought");
+        assert.strictEqual(productsBought.args.product, product, "productCreated event logged did not have expected availableStock");
+        assert.strictEqual(productsBought.args.price.toNumber(), 10, "productCreated event logged did not have expected product price");
+        assert.strictEqual(productsBought.args.quantity.toNumber(), 2, "productCreated event logged did not have expected product name");
+    });
+
+
+    it("Should allow a store owner withdraw from fund", async () => {
+        
+        //Create the store owner first.
+        let tx = await storeInstance.addStoreOwner(accounts[2], "Allan",
+                                    "Katongole","kapsonkatongole@gmail.com",
+                                    {from: accounts[0]});
+
+        const storeOwnerCreated = tx.logs[0];
+
+        //create the product with storeowner address
+        await storeInstance.createProduct(10, 10,
+                                    "Matooke","Matooke fresh from Uganda",
+                                    {from: storeOwnerCreated.args.storeowneraddress});
+
+        const product = await storeInstance.products(0);
+
+        //Buy the product from the storefront to add some value to fund
+        let tx1 = await storeInstance.buyProducts(product, 3,
+            {from: accounts[3], value: 50});
+        
+        const productWithFund = await storeInstance.products(0);
+
+        //call withdrawfund to trigger the withdraw
+        let tx2 = await storeInstance.withdrawFund(productWithFund, accounts[3], 3,
+            {from: storeOwnerCreated.args.storeowneraddress});
+        
+    
+        assert.strictEqual(tx2.receipt.logs.length, 1, "withdrawFund() call did not log 1 event");
+        assert.strictEqual(tx2.logs.length, 1, "withdrawFund() call did not log 1 event");
+        const FundWithdrawn = tx2.logs[0];
+        assert.strictEqual(FundWithdrawn.event, "FundWithdrawn", "withdrawFund() call did not log event productsBought");
         // assert.strictEqual(productsBought.args.availableStock.toNumber(), 10, "productCreated event logged did not have expected availableStock");
         // assert.strictEqual(productCreated.args.price.toNumber(), 10000, "productCreated event logged did not have expected product price");
         // assert.strictEqual(productCreated.args.productName, "Matooke", "productCreated event logged did not have expected product name");

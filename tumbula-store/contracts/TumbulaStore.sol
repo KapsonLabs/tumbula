@@ -98,6 +98,13 @@ contract TumbulaStore{
         uint quantity
     );
 
+    event FundWithdrawn(
+        uint indexed date,
+        address indexed product, 
+        address recipient, 
+        uint amount
+    );
+
     /* Modifer that checks if the msg.sender has an admin role */
     modifier onlyAdmin {
         require(
@@ -115,6 +122,15 @@ contract TumbulaStore{
             );
         _;
     }
+
+    /*Modifier that checks if msg.sender is the productowner of the product */
+    modifier onlyProductOwner(address product) {
+        require(
+            msg.sender == Product(product).storeowner(),
+            "Only the product owner can call this method");
+        _;
+    }
+
 
     /*Circuit breaker pattern modifiers */
     modifier stopInEmergency { 
@@ -166,6 +182,7 @@ contract TumbulaStore{
     ) 
             public 
             onlyAdmin
+
     {
         storeowners[storeOwnerNumber] = StoreOwner(
             storeOwnerNumber, 
@@ -221,7 +238,6 @@ contract TumbulaStore{
         ) 
             public 
             onlyStoreOwner
-            stopInEmergency
         {
         storefronts[storeFrontNumber] = StoreFront(storeFrontNumber, msg.sender, _storename, _storelocation, _storemerchandise);
         storeFrontNumber = storeFrontNumber + 1;
@@ -290,9 +306,10 @@ contract TumbulaStore{
         require(_quantity > 0, "Ensure quantity is greater than zero");
         Product product = Product(_product);
         uint price = product.price();
-        
+        uint availableStock = product.availableStock();
+
         // check available quantity
-        require(_quantity <= product.availableStock(), "Ensure quantity is less than available Stock");
+        require(availableStock >= _quantity, "Ensure quantity is less than available Stock");
         
         // check payment amount
         require(msg.value >= _quantity.mul(price), "Ensure price paid is enough to cover costs");
@@ -303,6 +320,28 @@ contract TumbulaStore{
         
         product.buyProducts(msg.sender, _quantity);
         emit productsBought(address(product), msg.sender, price, _quantity);
+    }
+
+    /** @dev Withdraws from fund 
+     * @param _product Address of product token
+     * @param _recipient Address of recipient to be paid
+     * @param _amount Amount in wei to pay
+     * @return Boolean for testing in solidity
+     */
+    function withdrawFund(address _product, address payable _recipient, uint _amount) 
+        public 
+        stopInEmergency
+        // onlyProductOwner(_product)
+        returns (bool)
+    {
+        require(_recipient != address(0), "Admins should not be reciepients");
+        require(_amount > 0, "Amount should be greater than zero");
+        
+        Product(_product).withdrawFund(_amount);
+        
+        emit FundWithdrawn(now, _product, _recipient, _amount);
+        _recipient.transfer(_amount);
+        return true;
     }
 
 
@@ -329,8 +368,8 @@ contract TumbulaStore{
     /** @dev Returns array of product token addresses
      * @return Product token addresses
      */
-    // function getProducts() public view returns (address[]) {
-    //     return products;
-    // }
+    function getProducts() public view returns (address[] memory) {
+        return products;
+    }
 
 }

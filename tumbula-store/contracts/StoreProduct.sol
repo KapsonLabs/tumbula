@@ -1,15 +1,10 @@
 pragma solidity >=0.4.21 <0.6.0;
 import "./SafeMath.sol";
-import "./Roles.sol";
 import "./StandardToken.sol";
 
 /** @title A Store Product that inherits ERC20 */
 contract StoreProduct is StandardToken{
 
-    using Roles for Roles.Role;
-
-    Roles.Role private admin;
-    Roles.Role private store_owner;
     
     address public storeowner;
     address public storefront;
@@ -17,6 +12,7 @@ contract StoreProduct is StandardToken{
     uint public availableStock;
     uint public price;
     uint public sales;
+    uint public fund;
 
     string public productName;
     string public shortDescription;
@@ -28,15 +24,6 @@ contract StoreProduct is StandardToken{
         string shortDescription
     );
 
-    
-    /* Modifer that checks if the msg.sender has a store owner role */
-    modifier onlyStoreOwner {
-        require(
-            store_owner.has(msg.sender),
-            "Only the store owner can call this function"
-            );
-        _;
-    }
     
     modifier onlyBuyer {
         require(balanceOf(msg.sender) > 0, "Only buyer can call this method");
@@ -63,7 +50,10 @@ contract StoreProduct is StandardToken{
         storefront = _storefront;
         
         sales = 0;
+        fund = 0;
         price = _price;
+
+        availableStock = _availableStock;
         
         totalSupply_ = _availableStock;
         productName = _productName;
@@ -121,7 +111,7 @@ contract StoreProduct is StandardToken{
         
         availableStock = availableStock.sub(quantity);
         sales = sales.add(quantity.mul(price));
-        // fund = fund.add(quantity.mul(price));
+        fund = fund.add(quantity.mul(price));
         
         emit Transfer(storeowner, buyer, quantity);
         return true;
@@ -147,14 +137,29 @@ contract StoreProduct is StandardToken{
         _productName = productName;
         _shortDescription = shortDescription;
     }
+
+    /** @dev Withdraws from fund to pay expense
+     * @param amount Amount in wei to pay
+     * @return Boolean for testing in solidity
+     */
+    function withdrawFund(uint amount) external returns (bool) {
+        require(fund >= amount, "Amount in fund should be greater than or equal to amount to be withdrawn");
+        fund = fund.sub(amount);
+        return true;
+    }
     
     /** @dev Retrieves Product statistics 
      * @return Total product sales
      * @return Balance from product sales and withdrawals
      * @return Total supply of products  
      */
-    function getProductStats() public view returns (uint, uint, uint, uint) {
-        return (sales, balanceOf(storefront), balanceOf(storeowner), totalSupply_);
+    function getProductStats() public view returns (uint _sales, uint _fund, uint _balance, uint _totalSupply) {
+        return (
+            _sales = sales, 
+            _fund = fund, 
+            _balance = balanceOf(storeowner), 
+            _totalSupply = totalSupply_
+        );
     }
 
 }
