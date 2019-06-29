@@ -64,3 +64,94 @@ Then, all state-changing functions are decorated with ```stopInEmergency``` exce
     }
 ```
 
+## Pull Over Push Payments Pattern
+
+It is generally a good practice to let recepients pull payments from the smart contract instead of letting the smart contract push payments to them. This pattern protects against Reentrancy and Denial of Service attacks. In the Tumbula.sol contract, store owners can call the ```withdrawFund()``` method to pull payments for themselves or send a payment to another party.
+
+```
+    /** @dev Withdraws from fund 
+     * @param _product Address of product token
+     * @param _recipient Address of recipient to be paid
+     * @param _amount Amount in wei to pay
+     * @return Boolean for testing in solidity
+     */
+    function withdrawFund(address _product, address payable _recipient, uint _amount) 
+        public 
+        stopInEmergency
+        // onlyProductOwner(_product)
+        returns (bool)
+    {
+        require(_recipient != address(0), "Admins should not be reciepients");
+        require(_amount > 0, "Amount should be greater than zero");
+        
+        Product(_product).withdrawFund(_amount);
+        
+        emit FundWithdrawn(now, _product, _recipient, _amount);
+        _recipient.transfer(_amount);
+        return true;
+    }
+```
+
+## Fail Early and Loud Pattern(Fail Fast).
+
+Here the require keyword is used to throw as early as possible whenever certain conditions are not met. This pattern makes it glaringly obvious and stops further execution. It is used almost everywhere in the code, especially inside modifiers, e.g.: A special shoutout to using ```transfer()``` instead of ```send()``` implement this design pattern as well because ```transfer()``` doesnt fail silently as opposed to ```send()```
+
+#### Demonstrating use of require
+```
+    /** @dev Creates ERC20 token per product 
+     * @param availableStock Quantity of products available for each individual product
+     * @param price Price of each product
+     * @param productName Name of the product 
+     * @param shortDescription Short description of the product
+     * @return Boolean for testing in solidity
+     */
+    function createProduct(uint availableStock, uint price, string memory productName, string memory shortDescription) 
+        public 
+        onlyStoreOwner
+        stopInEmergency
+        returns (bool)
+    {
+        require(price > 0, "Price should be greater than zero");
+        require(bytes(productName).length > 0, "There should be a name");
+        require(bytes(shortDescription).length > 0, "There should be a short description");
+
+        Product product = new Product(msg.sender, availableStock, price, productName, shortDescription);
+        products.push(address(product));
+        
+        emit productCreated(
+            address(product),
+            availableStock,
+            price,
+            productName,
+            shortDescription   
+        );
+        return true;
+    }
+
+```
+
+#### Demostrating use of transfer
+```
+    /** @dev Withdraws from fund 
+     * @param _product Address of product token
+     * @param _recipient Address of recipient to be paid
+     * @param _amount Amount in wei to pay
+     * @return Boolean for testing in solidity
+     */
+    function withdrawFund(address _product, address payable _recipient, uint _amount) 
+        public 
+        stopInEmergency
+        // onlyProductOwner(_product)
+        returns (bool)
+    {
+        require(_recipient != address(0), "Admins should not be reciepients");
+        require(_amount > 0, "Amount should be greater than zero");
+        
+        Product(_product).withdrawFund(_amount);
+        
+        emit FundWithdrawn(now, _product, _recipient, _amount);
+------> _recipient.transfer(_amount);
+        return true;
+    }
+```
+
