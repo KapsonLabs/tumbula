@@ -1,5 +1,5 @@
 pragma solidity >=0.4.21 <0.6.0;
-import "./SafeMath.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "./StandardToken.sol";
 
 /** @title A Store Product that inherits ERC20 */

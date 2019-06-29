@@ -1,6 +1,6 @@
 pragma solidity >=0.4.21 <0.6.0;
-import "./Roles.sol";
-import "./SafeMath.sol";
+import "openzeppelin-solidity/contracts/access/Roles.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import {StoreProduct as Product} from "./StoreProduct.sol";
 
 contract TumbulaStore{
