@@ -2,7 +2,7 @@
 
 ## Introduction.
 
-Tumbula.sol is my main contract, a factory contract that creates instances of StoreProduct.sol per product. StoreProduct.sol inherits the ERC20 standard contract from OpenZeppelin and also uses its SafeMath library to securely perform arithmetic operations.
+Tumbula.sol is my main contract, a factory contract that creates instances of StoreProduct.sol per product. StoreProduct.sol inherits the ERC20 standard contract from OpenZeppelin and also uses its SafeMath library to securely perform arithmetic operations. Tumbula.sol also inherits the Roles contract from OpenZeppelin to manage user roles within the contract.
 
 ## Access Restricition Pattern.
 
@@ -55,9 +55,6 @@ Tumbula.sol implements the circuit breaker pattern to give the admin the ability
 Then, all state-changing functions are decorated with ```stopInEmergency``` except admin functions. The admin can toggle the emergency state by calling toggleEmergency():
 
 ```
-    /** @dev Lets admin toggle the state of emergency 
-     * @return Boolean for testing in solidity
-     */
     function toggleEmergency() public onlyAdmin returns (bool) {
         emergency = !emergency;
         return true;
@@ -69,12 +66,6 @@ Then, all state-changing functions are decorated with ```stopInEmergency``` exce
 It is generally a good practice to let recepients pull payments from the smart contract instead of letting the smart contract push payments to them. This pattern protects against Reentrancy and Denial of Service attacks. In the Tumbula.sol contract, store owners can call the ```withdrawFund()``` method to pull payments for themselves or send a payment to another party.
 
 ```
-    /** @dev Withdraws from fund 
-     * @param _product Address of product token
-     * @param _recipient Address of recipient to be paid
-     * @param _amount Amount in wei to pay
-     * @return Boolean for testing in solidity
-     */
     function withdrawFund(address _product, address payable _recipient, uint _amount) 
         public 
         stopInEmergency
@@ -98,13 +89,6 @@ Here the require keyword is used to throw as early as possible whenever certain 
 
 #### Demonstrating use of require
 ```
-    /** @dev Creates ERC20 token per product 
-     * @param availableStock Quantity of products available for each individual product
-     * @param price Price of each product
-     * @param productName Name of the product 
-     * @param shortDescription Short description of the product
-     * @return Boolean for testing in solidity
-     */
     function createProduct(uint availableStock, uint price, string memory productName, string memory shortDescription) 
         public 
         onlyStoreOwner
@@ -132,12 +116,6 @@ Here the require keyword is used to throw as early as possible whenever certain 
 
 #### Demostrating use of transfer
 ```
-    /** @dev Withdraws from fund 
-     * @param _product Address of product token
-     * @param _recipient Address of recipient to be paid
-     * @param _amount Amount in wei to pay
-     * @return Boolean for testing in solidity
-     */
     function withdrawFund(address _product, address payable _recipient, uint _amount) 
         public 
         stopInEmergency
