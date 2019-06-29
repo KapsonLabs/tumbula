@@ -2,7 +2,7 @@
 Tumbula Store is an online marketplace that operates on the blockchain. There are a list of stores on a central marketplace where shoppers can purchase goods posted by the store owners.
 
 # High Level Architecture Diagram
-![Image of HighlevelArchitecture](https://github.com/KapsonLabs/tumbula/images/TumbulaStore.jpg)
+![Image of HighlevelArchitecture](/images/TumbulaStore.jpg)
 
 ## Getting Started
 
