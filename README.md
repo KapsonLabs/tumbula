@@ -65,7 +65,7 @@ truffle test
 The smart contract is deployed to the rinkeby testnet. 
 The frontend application is hosted on a personal VPS.
 * [Etherscan](https://rinkeby.etherscan.io/address/0x114Ebc329d6cDD434091238C558DA19208a28B21) - Checkout the trasactions on etherscan by appending your address from Metamask to the link provided
-* [React FrontEnd](http://tumbula.kapsonlabs.ml) - Live front app
+* [React FrontEnd](http://tumbula.kapsonlabs.ml/admin) - Live front app
 
 
 ## Built With
